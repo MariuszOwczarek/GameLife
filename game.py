@@ -2,6 +2,7 @@ import pygame
 from meal import Meal
 from dot import Dot
 from settings import DEFAULT_SETTINGS, Settings
+import matplotlib.pyplot as plt
 
 
 class Game_Life:
@@ -9,12 +10,13 @@ class Game_Life:
     def __init__(self, settings: Settings = DEFAULT_SETTINGS):
         self.settings = settings
         pygame.init()
-        self.screen = pygame.display.set_mode((self.settings.board_w,
-                                               self.settings.board_h))
-        self.cell_size = self.settings.size
-        self.meal_size = self.settings.size
+        self.screen = pygame.display.set_mode((self.settings.board_width,
+                                               self.settings.board_height))
+        self.cell_size = self.settings.instance_size
+        self.meal_size = self.settings.instance_size
         self.dots = []
         self.meals = []
+        self.stats = []
         self.font = pygame.font.SysFont('Arial', 12)
 
         for _ in range(self.settings.initial_dots):
@@ -46,9 +48,10 @@ class Game_Life:
                     break
 
             baby = None
-            if (dot.age >= self.settings.min_reproduction and
-               dot.age <= self.settings.max_reproduction):
-                baby = dot.reproduce()
+            if (self.settings.dot_min_age_reproduction <= dot.age
+               <= self.settings.dot_max_age_reproduction):
+                if len(self.dots) < self.settings.dot_max_population:
+                    baby = dot.reproduce()
 
             if baby:
                 baby_pos = (baby.position[0], baby.position[1])
@@ -94,17 +97,57 @@ class Game_Life:
     def run(self):
         run = True
         clock = pygame.time.Clock()
+
+        plt.ion()
+        fig, ax = plt.subplots()
+        line_count, = ax.plot([], [], label="Count")
+        line_avg, = ax.plot([], [], label="Avg Age")
+        ax.set_xlim(0, 700)
+        ax.set_ylim(0, self.settings.dot_max_population + 10)
+        ax.set_xlabel("Ticks")
+        ax.set_ylabel("Value")
+        ax.legend()
+
+        tick_number = 0
+
         while run:
             clock.tick(self.settings.clock_frames)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
 
-            if len(self.dots) == 0:
+            if not self.dots:
                 print("All dots dead")
                 run = False
+            else:
+                ages = [dot.age for dot in self.dots]
+                avg_age = sum(ages) / len(ages)
+                tick_stats = {
+                    "count": len(ages),
+                    "avg_age": avg_age
+                }
+                self.stats.append(tick_stats)
+
+                # Update live plot
+                tick_number += 1
+                xs = list(range(tick_number))
+                counts = [s["count"] for s in self.stats]
+                avgs = [s["avg_age"] for s in self.stats]
+
+                line_count.set_data(xs, counts)
+                line_avg.set_data(xs, avgs)
+
+                ax.set_xlim(0, max(700, tick_number))
+                ax.set_ylim(0, max(self.settings.dot_max_population + 10,
+                                   max(avgs)+5))
+                fig.canvas.draw()
+                fig.canvas.flush_events()
 
             self.screen.fill((0, 0, 0))
             self.update()
             self.draw()
             pygame.display.update()
+
+        plt.ioff()
+        plt.show()

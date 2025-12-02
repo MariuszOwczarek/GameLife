@@ -7,7 +7,7 @@ class Dot:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.age = 0
-        self.max_age = self.settings.dot_max_age
+        self.max_age = self.settings.dot_max_life_age
         self.energy = self.settings.dot_initial_energy
         self.color = (random.randint(0, 255), random.randint(0, 255),
                       random.randint(0, 255))
@@ -33,7 +33,7 @@ class Dot:
         return False
 
     def reproduce(self):
-        if self.energy >= self.settings.repro_threshold:
+        if self.energy >= self.settings.dot_reproduction_threshold:
             child_energy = self.energy // 2
             self.energy -= child_energy
 

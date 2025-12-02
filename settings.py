@@ -3,20 +3,19 @@ from dataclasses import dataclass
 
 @dataclass
 class Settings:
-    board_w: int = 400
-    board_h: int = 400
-    size: int = 20
-    initial_dots: int = 4
-    initial_meals: int = 100
-    clock_frames: int = 8
-    meal_energy: int = 30
-    repro_threshold: int = 110
-    min_repro: int = 17
-    max_repro: int = 55
-    dot_max_age: int = 120
+    clock_frames: int = 5
+    board_width: int = 400
+    board_height: int = 400
+    instance_size: int = 20
+    initial_dots: int = 5
+    initial_meals: int = 200
+    meal_energy: int = 35
     dot_initial_energy = 100
-    min_reproduction: int = 17
-    max_reproduction: int = 55
+    dot_min_age_reproduction: int = 16
+    dot_max_age_reproduction: int = 501
+    dot_reproduction_threshold: int = 115
+    dot_max_life_age: int = 115
+    dot_max_population = 200
 
 
 DEFAULT_SETTINGS = Settings()
