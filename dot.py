@@ -1,16 +1,14 @@
 import pygame
 import random
+from settings import Settings
 
 
 class Dot:
-    REPRO_THRESHOLD = 110
-    MAXIMUM_AGE = 110
-    ENERGY = 100
-
-    def __init__(self):
+    def __init__(self, settings: Settings):
+        self.settings = settings
         self.age = 0
-        self.max_age = self.MAXIMUM_AGE
-        self.energy = self.ENERGY
+        self.max_age = self.settings.dot_max_age
+        self.energy = self.settings.dot_initial_energy
         self.color = (random.randint(0, 255), random.randint(0, 255),
                       random.randint(0, 255))
 
@@ -35,11 +33,11 @@ class Dot:
         return False
 
     def reproduce(self):
-        if self.energy >= self.REPRO_THRESHOLD:
+        if self.energy >= self.settings.repro_threshold:
             child_energy = self.energy // 2
             self.energy -= child_energy
 
-            baby = Dot()
+            baby = Dot(self.settings)
             baby.age = 0
 
             neighbors = []

@@ -1,33 +1,27 @@
 import pygame
 from meal import Meal
 from dot import Dot
+from settings import DEFAULT_SETTINGS, Settings
 
 
 class Game_Life:
 
-    MIN_REPRODUCTION = 17
-    MAX_REPRODUCTION = 55
-    CLOCK_FRAMES = 10
-    INITIAL_MEALS = 80
-    INITIAL_DOTS = 5
-    WIDTH = 400
-    HEIGHT = 400
-    SIZE = 20
-
-    def __init__(self):
+    def __init__(self, settings: Settings = DEFAULT_SETTINGS):
+        self.settings = settings
         pygame.init()
-        self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
-        self.cell_size = self.SIZE
-        self.meal_size = self.SIZE
+        self.screen = pygame.display.set_mode((self.settings.board_w,
+                                               self.settings.board_h))
+        self.cell_size = self.settings.size
+        self.meal_size = self.settings.size
         self.dots = []
         self.meals = []
         self.font = pygame.font.SysFont('Arial', 12)
 
-        for _ in range(self.INITIAL_DOTS):
-            self.dots.append(Dot())
+        for _ in range(self.settings.initial_dots):
+            self.dots.append(Dot(self.settings))
 
-        for _ in range(self.INITIAL_MEALS):
-            self.meals.append(Meal())
+        for _ in range(self.settings.initial_meals):
+            self.meals.append(Meal(self.settings))
 
     def update(self):
         alive_dots = []
@@ -52,8 +46,8 @@ class Game_Life:
                     break
 
             baby = None
-            if (dot.age >= self.MIN_REPRODUCTION and
-               dot.age <= self.MAX_REPRODUCTION):
+            if (dot.age >= self.settings.min_reproduction and
+               dot.age <= self.settings.max_reproduction):
                 baby = dot.reproduce()
 
             if baby:
@@ -71,7 +65,7 @@ class Game_Life:
         if meals_to_remove:
             self.meals = [m for m in self.meals if m not in meals_to_remove]
             for _ in range(len(meals_to_remove)):
-                self.meals.append(Meal())
+                self.meals.append(Meal(self.settings))
 
         if babies_to_add:
             alive_dots.extend(babies_to_add)
@@ -101,7 +95,7 @@ class Game_Life:
         run = True
         clock = pygame.time.Clock()
         while run:
-            clock.tick(self.CLOCK_FRAMES)
+            clock.tick(self.settings.clock_frames)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False

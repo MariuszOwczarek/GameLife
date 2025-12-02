@@ -1,2 +1,53 @@
-.venv
-__pychache__
+# ---- Python cache ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.pyw
+*$py.class
+
+# ---- Virtual environments ----
+.venv/
+venv/
+env/
+ENV/
+*.env
+
+# ---- Build / distribution ----
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ---- IDE / Editor ----
+
+# VS Code
+.vscode/
+.history/
+
+# PyCharm / IntelliJ
+.idea/
+
+# ---- OS garbage ----
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ---- Logs ----
+*.log
+
+# ---- Testing ----
+.coverage
+.pytest_cache/
+nosetests.xml
+coverage.xml
+htmlcov/
+
+# ---- Misc ---
